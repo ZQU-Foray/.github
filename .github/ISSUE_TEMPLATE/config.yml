@@ -1,0 +1,10 @@
+blank_issues_enabled: false
+contact_links:
+  # TODO(战队)：填入真实的飞书 / QQ 群链接后取消注释。
+  # 说明：config.yml 的 url 必须是可访问的完整链接，不能是 "#"（会渲染成死链）。
+  # - name: "💬 技术讨论"
+  #   url: "https://..."
+  #   about: "日常技术讨论请到战队飞书/QQ群，不要在 Issues 里聊天"
+  - name: "📖 贡献指南"
+    url: "https://github.com/ZQU-Foray/.github/blob/main/CONTRIBUTING.md"
+    about: "开发流程、Commit 规范、代码风格与 PR 流程"

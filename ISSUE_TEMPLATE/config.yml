@@ -1,8 +1,0 @@
-blank_issues_enabled: false
-contact_links:
-  - name: "💬 技术讨论"
-    url: "#"
-    about: "日常技术讨论请到战队飞书/QQ群，不要在 Issues 里聊天"
-  - name: "📖 文档"
-    url: "https://github.com/组织名/docs"
-    about: "查阅战队技术文档"
