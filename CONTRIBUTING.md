@@ -20,7 +20,7 @@
 ### 新队员 Checklist
 
 - [ ] 阅读本贡献指南
-- [ ] 配置 Git 用户名和邮箱（使用学校邮箱）
+- [ ] 配置 Git 用户名和邮箱
 - [ ] 了解 [RoboMaster 比赛规则](https://www.robomaster.com)
 - [ ] 阅读对应方向的技术文档（见各仓库 README）
 - [ ] 开始开发
