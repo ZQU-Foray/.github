@@ -1,11 +1,11 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Foray 战队队徽">
   <title>Foray · 肇庆学院 RoboMaster 战队</title>
   <!--
-    单色队徽（浅色背景版）：纯黑 #000000 + 透明背景。
-    深色背景请用同目录 logo-dark.svg（几何完全相同，仅填充为白色）。
+    单色队徽（深色背景版）：纯白 #FFFFFF + 透明背景。
+    浅色背景请用同目录 logo.svg（几何完全相同，仅填充为黑色）。
     设计坐标包围盒 x 124..446 / y 70..470，整体 translate(-29 -14) 后在 512 画布居中。
   -->
-  <g transform="translate(-29 -14)" fill="#000000">
+  <g transform="translate(-29 -14)" fill="#FFFFFF">
     <!-- 竖杆：上段垂直 → 中部一次锐利折步 → 尾部收成尖锋（即闪电） -->
     <path d="M190 70 L268 70 L268 250 L202 310 L202 430 L163 470 L124 430 L124 310 L190 250 Z"/>
     <!-- 上横：右端 45° 箭头收尖 -->

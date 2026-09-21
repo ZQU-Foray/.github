@@ -10,7 +10,10 @@
 </p>
 
 <p align="center">
-  <img src="https://github.com/ZQU-Foray/.github/raw/main/profile/assets/logo.svg" alt="Foray 战队队徽" width="200" />
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://github.com/ZQU-Foray/.github/raw/main/profile/assets/logo-dark.svg">
+    <img src="https://github.com/ZQU-Foray/.github/raw/main/profile/assets/logo.svg" alt="Foray 战队队徽" width="180">
+  </picture>
 </p>
 
 ---
