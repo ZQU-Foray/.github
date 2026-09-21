@@ -1,0 +1,53 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512" role="img" aria-label="Foray 战队队徽">
+  <title>Foray · 肇庆学院 RoboMaster 战队</title>
+
+  <defs>
+    <linearGradient id="plate" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1D2634"/>
+      <stop offset="1" stop-color="#0B0F15"/>
+    </linearGradient>
+    <!-- userSpaceOnUse：刻度是零宽/零高的直线，用 objectBoundingBox 会因包围盒退化而不绘制 -->
+    <linearGradient id="accent" gradientUnits="userSpaceOnUse" x1="62" y1="66" x2="450" y2="446">
+      <stop offset="0" stop-color="#3AF2C4"/>
+      <stop offset="1" stop-color="#12A8FF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- 装甲盾牌底板：同色粗描边 + 圆角连接形成圆角轮廓 -->
+  <polygon points="62,66 450,66 450,300 256,446 62,300"
+           fill="url(#plate)" stroke="url(#plate)" stroke-width="44" stroke-linejoin="round"
+           stroke-linecap="round"/>
+
+  <!-- 外圈亮边 -->
+  <polygon points="62,66 450,66 450,300 256,446 62,300"
+           fill="none" stroke="url(#accent)" stroke-width="6" stroke-linejoin="round"/>
+
+  <!-- 内圈暗边（层次） -->
+  <polygon points="86,90 426,90 426,306 256,414 86,306"
+           fill="none" stroke="#6B7F9E" stroke-width="2.5" stroke-linejoin="round" opacity="0.4"/>
+
+  <!-- 四向瞄准刻度 -->
+  <g stroke="url(#accent)" stroke-width="9" stroke-linecap="round" opacity="0.9">
+    <path d="M256 94 V126"/>
+    <path d="M256 394 V426"/>
+    <path d="M82 256 H114"/>
+    <path d="M398 256 H430"/>
+  </g>
+
+  <!-- 字母 F：竖杆 + 长上横 + 中横 -->
+  <g fill="#F3F7FB">
+    <rect x="186" y="150" width="48" height="222" rx="5"/>
+    <rect x="186" y="150" width="192" height="48" rx="5"/>
+    <rect x="186" y="240" width="144" height="46" rx="5"/>
+  </g>
+
+  <!-- 突进拖影 -->
+  <g fill="url(#accent)">
+    <rect x="394" y="150" width="22" height="48" rx="5" opacity="0.8"/>
+    <rect x="428" y="155" width="14" height="38" rx="5" opacity="0.45"/>
+  </g>
+
+  <!-- 锁定点 -->
+  <circle cx="306" cy="219" r="16" fill="#FF6B35"/>
+  <circle cx="306" cy="219" r="25" fill="none" stroke="#FF6B35" stroke-width="3" opacity="0.35"/>
+</svg>

@@ -9,11 +9,9 @@
   <img src="https://img.shields.io/badge/ZQU-Foray-2ea44f?style=flat-square" alt="ZQU Foray 战队">
 </p>
 
-<!-- 队徽：把队徽图片放到 profile/assets/logo.png 后，取消下面这段注释即可显示
 <p align="center">
-  <img src="https://github.com/ZQU-Foray/.github/raw/main/profile/assets/logo.png" alt="Foray 队徽" width="200" />
+  <img src="https://github.com/ZQU-Foray/.github/raw/main/profile/assets/logo.svg" alt="Foray 战队队徽" width="200" />
 </p>
--->
 
 ---
 
@@ -28,7 +26,7 @@
 | 赛季 | 成绩 | 备注 |
 |------|------|------|
 | 2027 | 备赛中 | 新赛季筹备 |
-| 2026 | 待补充 | <!-- 待补充：2026 赛季成绩 --> |
+| 2026 | 无成绩 | 该赛季未取得成绩 |
 | 2025 | 华南赛区八强 | RMUL |
 
 ## 📂 仓库导航
@@ -56,6 +54,11 @@
 - 提交代码前请先阅读 [贡献指南](https://github.com/ZQU-Foray/.github/blob/main/CONTRIBUTING.md)
 - Issue / PR 模板、贡献指南等**组织默认文件**统一由 [.github](https://github.com/ZQU-Foray/.github) 仓库维护，改一次即对全组织生效
 - 新队员可从 [Foray-HelloWorld](https://github.com/ZQU-Foray/Foray-HelloWorld) 开始熟悉协作流程
+
+## 📮 联系我们
+
+- 邮箱：[zqu_foray@protonmail.com](mailto:zqu_foray@protonmail.com)
+- 技术讨论：[GitHub Discussions](https://github.com/ZQU-Foray/.github/discussions)（战队群链接待补充）
 
 ---
 
