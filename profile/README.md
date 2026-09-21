@@ -9,12 +9,17 @@
   <img src="https://img.shields.io/badge/ZQU-Foray-2ea44f?style=flat-square" alt="ZQU Foray 战队">
 </p>
 
+<!-- 队徽：待定（先占位，不做设计）。
+     定稿后把文件放进 profile/assets/（建议 logo.svg 黑色版 + logo-dark.svg 白色版），
+     再取消下面这段注释即可自动跟随深浅主题显示：
+
 <p align="center">
   <picture>
     <source media="(prefers-color-scheme: dark)" srcset="https://github.com/ZQU-Foray/.github/raw/main/profile/assets/logo-dark.svg">
     <img src="https://github.com/ZQU-Foray/.github/raw/main/profile/assets/logo.svg" alt="Foray 战队队徽" width="180">
   </picture>
 </p>
+-->
 
 ---
 
