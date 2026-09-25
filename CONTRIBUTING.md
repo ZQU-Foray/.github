@@ -249,6 +249,15 @@ PID 参数在急转工况下积分饱和，添加积分限幅解决。
 每个仓库必须包含 `CODEOWNERS`，把 Review 自动分派到对应方向负责人，
 **不要全部堆给队长**——多仓之后那会成为瓶颈。
 
+> ⚠️ **两个前提，缺一则静默失效**：
+>
+> 1. **必须是每个仓库自己的 `CODEOWNERS`。** 放在组织 `.github` 仓库里**不生效**——
+>    默认社区健康文件的支持列表（CODE_OF_CONDUCT / CONTRIBUTING / FUNDING /
+>    Issue 与 PR 模板 / SECURITY / SUPPORT 等）**不含 `CODEOWNERS`**。
+>    它只能位于各仓库的 `.github/`、根目录或 `docs/` 下。
+> 2. **被引用的 team 必须先有该仓库的 Write 权限**，否则不会被派发 Review。
+>    即使 team 成员个人已通过组织成员身份或其他 team 获得写权限，**team 本身仍须有该仓的 Write**。
+
 ---
 
 ## 多仓协作
