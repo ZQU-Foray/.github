@@ -164,7 +164,11 @@ PID 参数在急转工况下积分饱和，添加积分限幅解决。
 ### C++ 命名空间与 include 根
 
 上位机软件控制系统定名 **Diesel**（[Discussion #6](https://github.com/orgs/ZQU-Foray/discussions/6) 投票通过）。
-C++ 代码统一用三层命名空间，与仓名、ROS 包名解耦：
+**仓名、ROS 包名、namespace、include 根、节点名统一用 `diesel_*` / `diesel::`**，四者一一对应：
+
+```
+仓库 diesel_<domain>  →  包 diesel_<domain>_<module>  →  namespace diesel::<domain>::<module>
+```
 
 ```cpp
 // 文件 include/diesel/localization/map/geometry.hpp
@@ -182,17 +186,23 @@ struct pose2 {
 
 | 对象 | 规则 | 示例 |
 | --- | --- | --- |
+| 仓库名 | `diesel_<domain>` | `diesel_platform`、`diesel_localization` |
+| ROS 包名 | `diesel_<domain>_<module>` | `diesel_localization_map`、`diesel_platform_driver_livox` |
 | namespace | `diesel::<domain>::<module>` | `diesel::localization::map`、`diesel::platform::hal` |
 | include 根 | 从 `include/` 起写全路径 | `#include "diesel/localization/map/geometry.hpp"` |
 | ROS 2 节点名 | `diesel_<module>` | `diesel_map_server` |
 
-**不跟着改的四项**（改了会打断装配、回放与外部依赖）：
+**只有两项不跟着改**（改了会打断生态工具与外队共享接口）：
 
-1. **ROS 包名**：仍是 `foray_*`。包名一旦改动，`.repos` 引用、launch、colcon 路径全部失效。
-2. **消息生成头**：`#include <foray_interfaces/msg/xxx.hpp>` 的类型落在**包名决定的命名空间**里，
-   不由我们选。自己写的代码包一层别名，不要试图改它。
-3. **话题名**：`/<module>/<entity>`，如 `/localization/state`、`/livox/lidar`。
-4. **tf frame**：`map` / `odom` / `base_link` 用 ROS REP-105 的标准名。
+1. **话题名**：`/<module>/<entity>`，如 `/localization/state`、`/livox/lidar`——已带模块域前缀，加 `diesel` 只是噪声。
+2. **tf frame**：`map` / `odom` / `base_link` 用 ROS REP-105 的标准名，Nav2 / RViz / 第三方插件硬依赖。
+
+> **改包名要整仓一起改**：`package.xml` 的 `<name>` 与 `<depend>`、`CMakeLists.txt` 的 `project()` 与
+> `ament_target_dependencies`、目录 `src/<pkg>/`、launch 的 `package=`、`.repos` 的 pin，缺一个就编不过；
+> 改完必须 `rm -rf build install log` 重建，否则 `install/` 里会残留旧包名的头文件。
+> 顺序与坑位见 `naming.md` §4.4 与 §6.3。
+
+`foray` 只作为**战队品牌**保留：组织名 `ZQU-Foray`，以及非上位机软件栈的仓（`foray_docs` / `foray_ml` / `foray_robots` / `foray_ws`）。
 
 旧→新映射表、`grep` 自查命令见 `naming.md` §4。
 

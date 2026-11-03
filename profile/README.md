@@ -39,22 +39,24 @@
 ## 🚀 系统命名：Diesel
 
 战队上位机软件控制系统定名 **Diesel**——由 [Discussion #6](https://github.com/orgs/ZQU-Foray/discussions/6)
-投票通过（2/2 赞成）。给人看的东西和给编译器看的东西分层命名，避免"改一个名字动全组代码"：
+投票通过（2/2 赞成）。`foray` 是**战队名字**，所以它留在组织名和战队资产上；Diesel 是**系统名字**，
+软件栈从仓名到节点名全部叫 `diesel_*`。只有 ROS 生态约定的话题与 tf frame 不动：
 
 | 层 | 管什么 | 记法 | 变不变 |
 |------|------|------|------|
-| 品牌层 | 战队与仓库 | `ZQU-Foray` · `foray_*` | 🔒 不变 |
+| 品牌层 | 战队与战队资产 | `ZQU-Foray` · `foray_docs` · `foray_ml` · `foray_robots` · `foray_ws` | 🔒 不变 |
 | 系统层 | 整套上位机 | **Diesel** | 🚀 本次定名 |
-| 代码层 | namespace / include 根 / 节点名 | `diesel::…` · `include/diesel/…` · `diesel_*` | ✅ 跟随系统层 |
-| 装配层 | ROS 包名 · 话题 · tf frame | `foray_*` · `/<module>/<entity>` · `map`/`odom` | 🔒 不变 |
+| 代码层 | 仓库名 · ROS 包名 · namespace · include 根 · 节点名 | `diesel_<domain>` · `diesel_<domain>_<module>` · `diesel::…` · `include/diesel/…` · `diesel_*` | ✅ 跟随系统层 |
+| 生态层 | ROS 话题 · tf frame | `/<module>/<entity>` · `map`/`odom`/`base_link` | 🔒 不变 |
 
 ```cpp
 #include "diesel/localization/map/grid.hpp"   // 头文件在 include/diesel/localization/map/grid.hpp
 namespace diesel::localization::map { }       // 三层 namespace：diesel::<domain>::<module>
 ```
 
-**为什么装配层不动**：ROS 包名一改，`.repos` 引用、launch、colcon 路径、消息生成头全部失效，
-换来的是零收益。所以 `foray_localization_map` 这个包名保留，只是它的代码写在 `diesel::localization::map` 里。
+**为什么话题与 tf frame 不动**：它们已经带有正确的语义（`/localization/state` 说明是哪个模块的什么实体），
+加 `diesel` 只是重复系统名，收益为零，却会打断 Nav2 配置、`foray_robots` 的参数文件与别人的 `tf2` 链路。
+包名与仓名反过来——它们承载"这是哪个仓、哪个包"的信息，统一之后 `colcon list` 一眼就能看出归属。
 
 - 📖 规范全文与旧→新映射表：[foray_docs / naming.md](https://github.com/ZQU-Foray/foray_docs/blob/main/naming.md)
 - ⚙️ 风格配置唯一源：[`config/`](https://github.com/ZQU-Foray/.github/tree/main/config)（clang-format / pyproject / editorconfig）
@@ -63,6 +65,11 @@ namespace diesel::localization::map { }       // 三层 namespace：diesel::<dom
 ## 📂 仓库导航
 
 ### 上位机（ROS 2）
+
+> 下列仓名是**改名前的现状**。迁到 Diesel 后对应 `diesel_interfaces` / `diesel_platform` / `diesel_localization` /
+> `diesel_vision` / `diesel_auto_aim` / `diesel_navigation` / `diesel_decision` / `diesel_simulation`；
+> `foray_ws`（元仓）与 `foray_robots`（战队装配）保留 `foray`。进度见
+> [naming.md §6.1](https://github.com/ZQU-Foray/foray_docs/blob/main/naming.md)。
 
 | 仓库 | 说明 |
 |------|------|

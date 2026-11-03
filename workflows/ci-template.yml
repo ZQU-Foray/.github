@@ -15,7 +15,8 @@
 #       2) `find ... | xargs clang-format` —— 空输入时 xargs 仍会执行一次无参命令。
 #   - 修正 find 的 -o 与 -not 优先级问题（补括号），并为 xargs 加 -r / -print0。
 #   - 增加 namespace-guard 与 style-config 两个作业（Diesel 定名，2026-11）：
-#       namespace-guard 扫描残留的 `foray::` 命名空间与 `#include "foray/..."` 旧 include 根；
+#       namespace-guard 扫描残留的 `foray::` 命名空间、`#include "foray/..."` 旧 include 根，
+#       以及 package.xml / CMakeLists.txt 里的旧包名（`<name>foray_*`、`project(foray_*`）；
 #       style-config 与组织 config/ 的 canonical 文件比对仓根 .clang-format / pyproject.toml。
 #     两者都由仓根 `.diesel-naming` 的 mode 控制严格程度（enforced 失败 / migrating 仅告警 /
 #     na 跳过）；文件缺失按 migrating 处理，因此未迁移的仓不会一上线就红。
@@ -208,7 +209,7 @@ jobs:
           { echo "### Diesel 命名空间守卫"; echo; echo "- mode: \`$mode\`"; } >> "$GITHUB_STEP_SUMMARY"
           echo "mode=$mode"
 
-      - name: 扫描旧命名空间与旧 include 根
+      - name: 扫描旧命名空间、旧 include 根与旧包名
         id: scan
         if: steps.policy.outputs.mode != 'na'
         shell: bash
@@ -225,6 +226,10 @@ jobs:
             {
               grep -rnE '\bforay::[A-Za-z_]' "${SRC[@]}" "${SKIP[@]}" . 2>/dev/null
               grep -rnE '#[[:space:]]*include[[:space:]]*[<"]foray/' "${SRC[@]}" "${SKIP[@]}" . 2>/dev/null
+              # ROS 包名：package.xml 的 <name> 与 CMakeLists.txt 的 project()。
+              # 这两处漏改一样编不过（依赖解析、install 目录名都跟着包名走）。
+              grep -rnE '<name>[[:space:]]*foray_[A-Za-z0-9_]+' --include='package.xml' "${SKIP[@]}" . 2>/dev/null
+              grep -rnE 'project[[:space:]]*\([[:space:]]*foray_[A-Za-z0-9_]+' --include='CMakeLists.txt' "${SKIP[@]}" . 2>/dev/null
             } | grep -vE "$NOT_COMMENT" | sort -u
           ) || true
 
@@ -249,7 +254,7 @@ jobs:
           mode="${{ steps.policy.outputs.mode }}"
           count="${{ steps.scan.outputs.count }}"
           if [ "$mode" = "enforced" ]; then
-            echo "::error::仍有 ${count} 处旧命名（foray:: / #include \"foray/\"），但 .diesel-naming 声明 mode: enforced。改法见 foray_docs/naming.md §4。"
+            echo "::error::仍有 ${count} 处旧命名（foray:: / #include \"foray/\" / 旧包名），但 .diesel-naming 声明 mode: enforced。改法见 foray_docs/naming.md §4。"
             exit 1
           fi
           echo "::warning::仍有 ${count} 处旧命名（mode: migrating，不阻断构建）。改法见 foray_docs/naming.md §4。"
