@@ -36,6 +36,30 @@
 | 2027 | 备赛中 | 新赛季筹备 |
 | 2026 | 华南赛区八强 | RMUL |
 
+## 🚀 系统命名：Diesel
+
+战队上位机软件控制系统定名 **Diesel**——由 [Discussion #6](https://github.com/orgs/ZQU-Foray/discussions/6)
+投票通过（2/2 赞成）。给人看的东西和给编译器看的东西分层命名，避免"改一个名字动全组代码"：
+
+| 层 | 管什么 | 记法 | 变不变 |
+|------|------|------|------|
+| 品牌层 | 战队与仓库 | `ZQU-Foray` · `foray_*` | 🔒 不变 |
+| 系统层 | 整套上位机 | **Diesel** | 🚀 本次定名 |
+| 代码层 | namespace / include 根 / 节点名 | `diesel::…` · `include/diesel/…` · `diesel_*` | ✅ 跟随系统层 |
+| 装配层 | ROS 包名 · 话题 · tf frame | `foray_*` · `/<module>/<entity>` · `map`/`odom` | 🔒 不变 |
+
+```cpp
+#include "diesel/localization/map/grid.hpp"   // 头文件在 include/diesel/localization/map/grid.hpp
+namespace diesel::localization::map { }       // 三层 namespace：diesel::<domain>::<module>
+```
+
+**为什么装配层不动**：ROS 包名一改，`.repos` 引用、launch、colcon 路径、消息生成头全部失效，
+换来的是零收益。所以 `foray_localization_map` 这个包名保留，只是它的代码写在 `diesel::localization::map` 里。
+
+- 📖 规范全文与旧→新映射表：[foray_docs / naming.md](https://github.com/ZQU-Foray/foray_docs/blob/main/naming.md)
+- ⚙️ 风格配置唯一源：[`config/`](https://github.com/ZQU-Foray/.github/tree/main/config)（clang-format / pyproject / editorconfig）
+- 🔄 迁移进度：各仓用仓根 `.diesel-naming` 的 `mode: enforced | migrating | na` 自报状态，CI 按此收紧
+
 ## 📂 仓库导航
 
 ### 上位机（ROS 2）
@@ -62,7 +86,7 @@
 | [foray_web](https://github.com/ZQU-Foray/foray_web) | 战队内部信息管理 Web |
 | [foray_ml](https://github.com/ZQU-Foray/foray_ml) | 视觉 CNN 训练全流程工具集：数据准备 → 标注管理 → 预标注 → 训练 → 推理（私有） |
 | [mvs-sdk](https://github.com/ZQU-Foray/mvs-sdk) | 海康机器人 MVS 相机 SDK 二进制分发（私有，组织内可见） |
-| [foray_docs](https://github.com/ZQU-Foray/foray_docs) | 组织技术文档：仓库结构 · 算法结构 · 地图资产 |
+| [foray_docs](https://github.com/ZQU-Foray/foray_docs) | 组织技术文档：仓库结构 · 算法结构 · 地图资产 · **命名与代码风格（naming.md）** |
 | [foray-HelloWorld](https://github.com/ZQU-Foray/foray-HelloWorld) | 新队员 Git 协作练习 |
 
 ### 算法与平台参考（Fork）
