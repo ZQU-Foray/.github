@@ -14,6 +14,12 @@
 #       1) `pip install -r requirements.txt` —— 文件不存在时直接报错退出；
 #       2) `find ... | xargs clang-format` —— 空输入时 xargs 仍会执行一次无参命令。
 #   - 修正 find 的 -o 与 -not 优先级问题（补括号），并为 xargs 加 -r / -print0。
+#   - 增加 namespace-guard 与 style-config 两个作业（Diesel 定名，2026-11）：
+#       namespace-guard 扫描残留的 `foray::` 命名空间、`#include "foray/..."` 旧 include 根，
+#       以及 package.xml / CMakeLists.txt 里的旧包名（`<name>foray_*`、`project(foray_*`）；
+#       style-config 与组织 config/ 的 canonical 文件比对仓根 .clang-format / pyproject.toml。
+#     两者都由仓根 `.diesel-naming` 的 mode 控制严格程度（enforced 失败 / migrating 仅告警 /
+#     na 跳过）；文件缺失按 migrating 处理，因此未迁移的仓不会一上线就红。
 
 name: CI
 
@@ -170,3 +176,174 @@ jobs:
           source install/setup.bash
           colcon test --event-handlers console_direct+
           colcon test-result --verbose
+
+  # ---- Diesel 命名空间守卫 ----
+  # 扫残留的旧命名：代码里用了 `foray::xxx`，或 include 根还是 `foray/xxx`。
+  # 严格程度由仓根 .diesel-naming 的 mode 决定，语义见 foray_docs/naming.md §6。
+  namespace-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 读取命名策略 .diesel-naming
+        id: policy
+        shell: bash
+        run: |
+          mode=""
+          if [ -f .diesel-naming ]; then
+            mode=$(sed -nE 's/^[[:space:]]*mode[[:space:]]*:[[:space:]]*"?([A-Za-z]+)"?[[:space:]]*(#.*)?$/\1/p' .diesel-naming | head -n 1)
+            mode=$(printf '%s' "$mode" | tr 'A-Z' 'a-z')
+          else
+            echo "::notice::仓根没有 .diesel-naming，按 migrating 处理（只告警）。"
+          fi
+          case "$mode" in
+            enforced|migrating|na) ;;
+            *)
+              if [ -n "$mode" ]; then
+                echo "::warning::.diesel-naming 的 mode=$mode 无法识别，按 migrating 处理。"
+              fi
+              mode=migrating
+              ;;
+          esac
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          { echo "### Diesel 命名空间守卫"; echo; echo "- mode: \`$mode\`"; } >> "$GITHUB_STEP_SUMMARY"
+          echo "mode=$mode"
+
+      - name: 扫描旧命名空间、旧 include 根与旧包名
+        id: scan
+        if: steps.policy.outputs.mode != 'na'
+        shell: bash
+        run: |
+          SRC=(--include='*.c' --include='*.h' --include='*.cc' --include='*.cpp'
+               --include='*.cxx' --include='*.hh' --include='*.hpp')
+          SKIP=(--exclude-dir=.git --exclude-dir=build --exclude-dir=install
+                --exclude-dir=log --exclude-dir=vendor --exclude-dir=third_party)
+          # 行首就是注释的行（// … / * … / /* …）当作「历史说明」，不计入：
+          # 它们在解释「以前叫什么」，不是代码在用它。行尾注释仍计入。
+          NOT_COMMENT='^[^:]+:[0-9]+:[[:space:]]*(//|\*|/\*)'
+
+          hits=$(
+            {
+              grep -rnE '\bforay::[A-Za-z_]' "${SRC[@]}" "${SKIP[@]}" . 2>/dev/null
+              grep -rnE '#[[:space:]]*include[[:space:]]*[<"]foray/' "${SRC[@]}" "${SKIP[@]}" . 2>/dev/null
+              # ROS 包名：package.xml 的 <name> 与 CMakeLists.txt 的 project()。
+              # 这两处漏改一样编不过（依赖解析、install 目录名都跟着包名走）。
+              grep -rnE '<name>[[:space:]]*foray_[A-Za-z0-9_]+' --include='package.xml' "${SKIP[@]}" . 2>/dev/null
+              grep -rnE 'project[[:space:]]*\([[:space:]]*foray_[A-Za-z0-9_]+' --include='CMakeLists.txt' "${SKIP[@]}" . 2>/dev/null
+            } | grep -vE "$NOT_COMMENT" | sort -u
+          ) || true
+
+          count=$(printf '%s' "$hits" | grep -c .) || true
+          echo "count=${count:-0}" >> "$GITHUB_OUTPUT"
+          if [ "${count:-0}" -gt 0 ]; then
+            {
+              echo
+              echo "发现 ${count} 处旧命名："
+              echo '```'
+              printf '%s\n' "$hits" | head -n 50
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "没有发现旧命名。" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: 判定（enforced 失败 / migrating 告警）
+        if: steps.policy.outputs.mode != 'na' && steps.scan.outputs.count != '0'
+        shell: bash
+        run: |
+          mode="${{ steps.policy.outputs.mode }}"
+          count="${{ steps.scan.outputs.count }}"
+          if [ "$mode" = "enforced" ]; then
+            echo "::error::仍有 ${count} 处旧命名（foray:: / #include \"foray/\" / 旧包名），但 .diesel-naming 声明 mode: enforced。改法见 foray_docs/naming.md §4。"
+            exit 1
+          fi
+          echo "::warning::仍有 ${count} 处旧命名（mode: migrating，不阻断构建）。改法见 foray_docs/naming.md §4。"
+
+  # ---- 组织风格配置一致性 ----
+  # 拿组织 .github/config/ 的 canonical 文件与仓根同名文件逐字节比对。
+  # 拉不到 canonical（网络问题 / 组织仓改名）时只告警不失败，
+  # 免得一个外网依赖把全组织的 CI 弄红。
+  style-config:
+    runs-on: ubuntu-latest
+    env:
+      ORG_REPO: ZQU-Foray/.github
+      ORG_REF: main
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: 读取命名策略 .diesel-naming
+        id: policy
+        shell: bash
+        run: |
+          mode=""
+          if [ -f .diesel-naming ]; then
+            mode=$(sed -nE 's/^[[:space:]]*mode[[:space:]]*:[[:space:]]*"?([A-Za-z]+)"?[[:space:]]*(#.*)?$/\1/p' .diesel-naming | head -n 1)
+            mode=$(printf '%s' "$mode" | tr 'A-Z' 'a-z')
+          fi
+          case "$mode" in
+            enforced|migrating|na) ;;
+            *) mode=migrating ;;
+          esac
+          echo "mode=$mode" >> "$GITHUB_OUTPUT"
+          echo "mode=$mode"
+
+      - name: 判断仓内是否用到受管语言
+        id: detect
+        if: steps.policy.outputs.mode != 'na'
+        shell: bash
+        run: |
+          cxx=false
+          python=false
+          if find . \( -name '*.c' -o -name '*.h' -o -name '*.cc' -o -name '*.cpp' -o -name '*.hpp' \) \
+               -not -path './.git/*' | grep -q .; then
+            cxx=true
+          fi
+          if find . -name '*.py' -not -path './.git/*' | grep -q .; then
+            python=true
+          fi
+          echo "cxx=$cxx" >> "$GITHUB_OUTPUT"
+          echo "python=$python" >> "$GITHUB_OUTPUT"
+          echo "C/C++=$cxx · Python=$python"
+
+      - name: 与 canonical 比对
+        id: diff
+        if: steps.policy.outputs.mode != 'na'
+        shell: bash
+        run: |
+          tmp=$(mktemp -d)
+          problems=0
+          checked=0
+
+          check() {
+            name="$1"
+            if ! curl -fsSL --max-time 20 -o "$tmp/$name" \
+                 "https://raw.githubusercontent.com/${ORG_REPO}/${ORG_REF}/config/${name}"; then
+              echo "::warning::拉取组织 canonical config/${name} 失败，跳过比对。"
+              return 0
+            fi
+            checked=$((checked + 1))
+            if [ ! -f "./$name" ]; then
+              echo "::warning::仓根缺少 $name，应从组织 config/${name} 复制。"
+              problems=$((problems + 1))
+            elif ! diff -q "$tmp/$name" "./$name" >/dev/null; then
+              echo "::warning::${name} 与组织 config/${name} 不一致。"
+              diff -u "$tmp/$name" "./$name" | head -n 40 || true
+              problems=$((problems + 1))
+            else
+              echo "${name} 与组织 canonical 一致。"
+            fi
+          }
+
+          if [ "${{ steps.detect.outputs.cxx }}" = "true" ]; then check .clang-format; fi
+          if [ "${{ steps.detect.outputs.python }}" = "true" ]; then check pyproject.toml; fi
+
+          echo "checked=$checked" >> "$GITHUB_OUTPUT"
+          echo "problems=$problems" >> "$GITHUB_OUTPUT"
+          { echo "### 风格配置一致性"; echo; echo "- 比对文件数: $checked"; echo "- 不一致: $problems"; } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: 判定（仅 enforced 失败）
+        if: steps.policy.outputs.mode == 'enforced' && steps.diff.outputs.problems != '0'
+        shell: bash
+        run: |
+          echo "::error::有 ${{ steps.diff.outputs.problems }} 个风格配置文件与组织 canonical 不一致，但 .diesel-naming 声明 mode: enforced。请覆盖仓根文件为 .github/config/ 的版本。"
+          exit 1

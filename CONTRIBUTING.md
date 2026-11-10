@@ -141,6 +141,10 @@ PID 参数在急转工况下积分饱和，添加积分限幅解决。
 
 ## 代码风格
 
+> **唯一源**：配置在组织 [`config/`](config/)（`.clang-format` / `pyproject.toml` / `.editorconfig`）。
+> 规范全文与迁移说明见 [foray_docs 的 `naming.md`](https://github.com/ZQU-Foray/foray_docs/blob/main/naming.md)。
+> 各仓**把这三份文件复制到自己的仓根**，不要在本仓里改参数——改参数请改组织 `.github` 并发 PR。
+
 ### 通用规则
 
 - **缩进**: 统一使用 4 空格
@@ -150,11 +154,70 @@ PID 参数在急转工况下积分饱和，添加积分限幅解决。
 
 ### 按语言
 
-| 语言 | 格式化工具 | 配置 |
+| 语言 | 格式化工具 | 配置来源 |
 |------|-----------|------|
-| Python | `ruff` + `black` | 见仓库 `pyproject.toml` |
-| C/C++ | `clang-format` | 见仓库 `.clang-format` |
+| Python | `ruff` + `black` | 组织 `config/pyproject.toml` → 复制到仓根 |
+| C/C++ | `clang-format` | 组织 `config/.clang-format` → 复制到仓根 |
 | YAML/JSON | `prettier` | 默认配置 |
+| 编辑器兜底 | EditorConfig | 组织 `config/.editorconfig` → 复制到仓根 |
+
+### C++ 命名空间与 include 根
+
+上位机软件控制系统定名 **Diesel**（[Discussion #6](https://github.com/orgs/ZQU-Foray/discussions/6) 投票通过）。
+**仓名、ROS 包名、namespace、include 根、节点名统一用 `diesel_*` / `diesel::`**，四者一一对应：
+
+```
+仓库 diesel_<domain>  →  包 diesel_<domain>_<module>  →  namespace diesel::<domain>::<module>
+```
+
+```cpp
+// 文件 include/diesel/localization/map/geometry.hpp
+#pragma once
+
+namespace diesel::localization::map {   // diesel::<domain>::<module>
+
+struct pose2 {
+    double x{};
+    double y{};
+};
+
+}  // namespace diesel::localization::map
+```
+
+| 对象 | 规则 | 示例 |
+| --- | --- | --- |
+| 仓库名 | `diesel_<domain>` | `diesel_platform`、`diesel_localization` |
+| ROS 包名 | `diesel_<domain>_<module>` | `diesel_localization_map`、`diesel_platform_driver_livox` |
+| namespace | `diesel::<domain>::<module>` | `diesel::localization::map`、`diesel::platform::hal` |
+| include 根 | 从 `include/` 起写全路径 | `#include "diesel/localization/map/geometry.hpp"` |
+| ROS 2 节点名 | `diesel_<module>` | `diesel_map_server` |
+
+**只有两项不跟着改**（改了会打断生态工具与外队共享接口）：
+
+1. **话题名**：`/<module>/<entity>`，如 `/localization/state`、`/livox/lidar`——已带模块域前缀，加 `diesel` 只是噪声。
+2. **tf frame**：`map` / `odom` / `base_link` 用 ROS REP-105 的标准名，Nav2 / RViz / 第三方插件硬依赖。
+
+> **改包名要整仓一起改**：`package.xml` 的 `<name>` 与 `<depend>`、`CMakeLists.txt` 的 `project()` 与
+> `ament_target_dependencies`、目录 `src/<pkg>/`、launch 的 `package=`、`.repos` 的 pin，缺一个就编不过；
+> 改完必须 `rm -rf build install log` 重建，否则 `install/` 里会残留旧包名的头文件。
+> 顺序与坑位见 `naming.md` §4.4 与 §6.3。
+
+`foray` 只作为**战队品牌**保留：组织名 `ZQU-Foray`，以及非上位机软件栈的仓（`foray_docs` / `foray_ml` / `foray_robots` / `foray_ws`）。
+
+旧→新映射表、`grep` 自查命令见 `naming.md` §4。
+
+### 迁移期怎么处理
+
+各仓在仓根放一个 `.diesel-naming` 声明状态：
+
+```yaml
+mode: enforced   # 已迁移完成，CI 出现 foray:: 即失败
+# mode: migrating  # 迁移中，CI 只告警不失败
+# mode: na         # 非 C++ 仓 / 空仓，CI 跳过
+```
+
+没迁移完的仓保持 `migrating`，不要为了"看起来干净"提前改成 `enforced`——
+那会让所有在改代码的人被 CI 堵住。
 
 ### Python 命名
 
@@ -176,7 +239,8 @@ PID 参数在急转工况下积分饱和，添加积分限幅解决。
 ### 提交前自查
 
 - [ ] 本地编译/运行通过
-- [ ] 代码符合风格规范（运行了格式化工具）
+- [ ] 代码符合风格规范（运行了格式化工具，仓根配置与组织 `config/` 一致）
+- [ ] 新增/改动的 C++ 代码用 `diesel::<domain>::<module>`，include 走 `"diesel/..."` 根
 - [ ] 添加了必要的注释和文档
 - [ ] 不包含调试代码、临时文件和密钥
 
@@ -295,7 +359,7 @@ ROS 2 / colcon 工作空间仓库，除通用检查外必须在 CI 中加入构�
 
 ## 求助
 
-- 📖 技术文档：[docs 仓库](https://github.com/ZQU-Foray/docs)
+- 📖 技术文档：[foray_docs 仓库](https://github.com/ZQU-Foray/foray_docs)
 - 💬 技术讨论：战队飞书群
 - 🐛 问题反馈：对应仓库的 Issues
 

@@ -36,9 +36,40 @@
 | 2027 | 备赛中 | 新赛季筹备 |
 | 2026 | 华南赛区八强 | RMUL |
 
+## 🚀 系统命名：Diesel
+
+战队上位机软件控制系统定名 **Diesel**——由 [Discussion #6](https://github.com/orgs/ZQU-Foray/discussions/6)
+投票通过（2/2 赞成）。`foray` 是**战队名字**，所以它留在组织名和战队资产上；Diesel 是**系统名字**，
+软件栈从仓名到节点名全部叫 `diesel_*`。只有 ROS 生态约定的话题与 tf frame 不动：
+
+| 层 | 管什么 | 记法 | 变不变 |
+|------|------|------|------|
+| 品牌层 | 战队与战队资产 | `ZQU-Foray` · `foray_docs` · `foray_ml` · `foray_robots` · `foray_ws` | 🔒 不变 |
+| 系统层 | 整套上位机 | **Diesel** | 🚀 本次定名 |
+| 代码层 | 仓库名 · ROS 包名 · namespace · include 根 · 节点名 | `diesel_<domain>` · `diesel_<domain>_<module>` · `diesel::…` · `include/diesel/…` · `diesel_*` | ✅ 跟随系统层 |
+| 生态层 | ROS 话题 · tf frame | `/<module>/<entity>` · `map`/`odom`/`base_link` | 🔒 不变 |
+
+```cpp
+#include "diesel/localization/map/grid.hpp"   // 头文件在 include/diesel/localization/map/grid.hpp
+namespace diesel::localization::map { }       // 三层 namespace：diesel::<domain>::<module>
+```
+
+**为什么话题与 tf frame 不动**：它们已经带有正确的语义（`/localization/state` 说明是哪个模块的什么实体），
+加 `diesel` 只是重复系统名，收益为零，却会打断 Nav2 配置、`foray_robots` 的参数文件与别人的 `tf2` 链路。
+包名与仓名反过来——它们承载"这是哪个仓、哪个包"的信息，统一之后 `colcon list` 一眼就能看出归属。
+
+- 📖 规范全文与旧→新映射表：[foray_docs / naming.md](https://github.com/ZQU-Foray/foray_docs/blob/main/naming.md)
+- ⚙️ 风格配置唯一源：[`config/`](https://github.com/ZQU-Foray/.github/tree/main/config)（clang-format / pyproject / editorconfig）
+- 🔄 迁移进度：各仓用仓根 `.diesel-naming` 的 `mode: enforced | migrating | na` 自报状态，CI 按此收紧
+
 ## 📂 仓库导航
 
 ### 上位机（ROS 2）
+
+> 下列仓名是**改名前的现状**。迁到 Diesel 后对应 `diesel_interfaces` / `diesel_platform` / `diesel_localization` /
+> `diesel_vision` / `diesel_auto_aim` / `diesel_navigation` / `diesel_decision` / `diesel_simulation`；
+> `foray_ws`（元仓）与 `foray_robots`（战队装配）保留 `foray`。进度见
+> [naming.md §6.1](https://github.com/ZQU-Foray/foray_docs/blob/main/naming.md)。
 
 | 仓库 | 说明 |
 |------|------|
@@ -62,7 +93,7 @@
 | [foray_web](https://github.com/ZQU-Foray/foray_web) | 战队内部信息管理 Web |
 | [foray_ml](https://github.com/ZQU-Foray/foray_ml) | 视觉 CNN 训练全流程工具集：数据准备 → 标注管理 → 预标注 → 训练 → 推理（私有） |
 | [mvs-sdk](https://github.com/ZQU-Foray/mvs-sdk) | 海康机器人 MVS 相机 SDK 二进制分发（私有，组织内可见） |
-| [foray_docs](https://github.com/ZQU-Foray/foray_docs) | 组织技术文档：仓库结构 · 算法结构 · 地图资产 |
+| [foray_docs](https://github.com/ZQU-Foray/foray_docs) | 组织技术文档：仓库结构 · 算法结构 · 地图资产 · **命名与代码风格（naming.md）** |
 | [foray-HelloWorld](https://github.com/ZQU-Foray/foray-HelloWorld) | 新队员 Git 协作练习 |
 
 ### 算法与平台参考（Fork）
