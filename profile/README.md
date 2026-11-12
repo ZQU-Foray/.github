@@ -42,16 +42,16 @@
 
 | 仓库 | 说明 |
 |------|------|
-| [foray_ws](https://github.com/ZQU-Foray/foray_ws) | 元仓：`.repos` 依赖锁定 · 集成 CI · 一键脚本（零业务代码） |
-| [foray_interfaces](https://github.com/ZQU-Foray/foray_interfaces) | 接口契约：msg/srv/action · 机间态势协议 · 裁判系统消息 |
-| [foray_platform](https://github.com/ZQU-Foray/foray_platform) | 平台基础层：时间 / 数学 / 参数 / 日志基础设施 + 下行 HAL |
-| [foray_localization](https://github.com/ZQU-Foray/foray_localization) | 定位与地图：内置地图 + 激光配准 · 配准残差动态物体检测 |
-| [foray_vision](https://github.com/ZQU-Foray/foray_vision) | 视觉与态势：装甲板检测跟踪 · 多源态势融合 · WorldSnapshot 生成 |
-| [foray_auto_aim](https://github.com/ZQU-Foray/foray_auto_aim) | 自瞄：弹道解算 · 多源目标融合 · 装甲板跟踪 |
-| [foray_navigation](https://github.com/ZQU-Foray/foray_navigation) | 导航栈（ROS 2 / Nav2） |
-| [foray_decision](https://github.com/ZQU-Foray/foray_decision) | 决策层：战术层 · 技能层 · 安全门 · 机间协同 · 对局仿真 |
-| [foray_robots](https://github.com/ZQU-Foray/foray_robots) | 兵种装配根：sentry_bringup / infantry_bringup · 参数 · 场地资产 |
-| [foray_simulation](https://github.com/ZQU-Foray/foray_simulation) | RMUL 2027 3v3 场地资产与「点云 → 定位 → 寻路」仿真链路（Humble + Fortress） |
+| [foray_ws](https://github.com/ZQU-Foray/diesel_ws) | 元仓：`.repos` 依赖锁定 · 集成 CI · 一键脚本（零业务代码） |
+| [foray_interfaces](https://github.com/ZQU-Foray/diesel_interfaces) | 接口契约：msg/srv/action · 机间态势协议 · 裁判系统消息 |
+| [foray_platform](https://github.com/ZQU-Foray/diesel_platform) | 平台基础层：时间 / 数学 / 参数 / 日志基础设施 + 下行 HAL |
+| [foray_localization](https://github.com/ZQU-Foray/diesel_localization) | 定位与地图：内置地图 + 激光配准 · 配准残差动态物体检测 |
+| [foray_vision](https://github.com/ZQU-Foray/diesel_vision) | 视觉与态势：装甲板检测跟踪 · 多源态势融合 · WorldSnapshot 生成 |
+| [foray_auto_aim](https://github.com/ZQU-Foray/diesel_auto_aim) | 自瞄：弹道解算 · 多源目标融合 · 装甲板跟踪 |
+| [foray_navigation](https://github.com/ZQU-Foray/diesel_navigation) | 导航栈（ROS 2 / Nav2） |
+| [foray_decision](https://github.com/ZQU-Foray/diesel_decision) | 决策层：战术层 · 技能层 · 安全门 · 机间协同 · 对局仿真 |
+| [foray_robots](https://github.com/ZQU-Foray/diesel_robots) | 兵种装配根：sentry_bringup / infantry_bringup · 参数 · 场地资产 |
+| [foray_simulation](https://github.com/ZQU-Foray/diesel_simulation) | RMUL 2027 3v3 场地资产与「点云 → 定位 → 寻路」仿真链路（Humble + Fortress） |
 
 ### 下位机、工具与文档
 
@@ -60,7 +60,7 @@
 | [foray_mcu](https://github.com/ZQU-Foray/foray_mcu) | 下位机固件：多兵种 × 多开发板（STM32H723 主力 / F407 / TM4C） |
 | [foray_mcu_controller](https://github.com/ZQU-Foray/foray_mcu_controller) | 原 ControllerCode：MC02 (H723) 与官方 C 板 (F407) 电控代码 |
 | [foray_web](https://github.com/ZQU-Foray/foray_web) | 战队内部信息管理 Web |
-| [foray_ml](https://github.com/ZQU-Foray/foray_ml) | 视觉 CNN 训练全流程工具集：数据准备 → 标注管理 → 预标注 → 训练 → 推理（私有） |
+| [foray_ml](https://github.com/ZQU-Foray/diesel_ml) | 视觉 CNN 训练全流程工具集：数据准备 → 标注管理 → 预标注 → 训练 → 推理（私有） |
 | [mvs-sdk](https://github.com/ZQU-Foray/mvs-sdk) | 海康机器人 MVS 相机 SDK 二进制分发（私有，组织内可见） |
 | [foray_docs](https://github.com/ZQU-Foray/foray_docs) | 组织技术文档：仓库结构 · 算法结构 · 地图资产 |
 | [foray-HelloWorld](https://github.com/ZQU-Foray/foray-HelloWorld) | 新队员 Git 协作练习 |
