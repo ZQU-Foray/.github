@@ -48,8 +48,8 @@
 | [diesel_interfaces](https://github.com/ZQU-Foray/diesel_interfaces) | 接口契约：msg/srv/action · 机间态势协议 · 裁判系统消息 |
 | [diesel_platform](https://github.com/ZQU-Foray/diesel_platform) | 平台基础层：时间 / 数学 / 参数 / 日志基础设施 + 下行 HAL |
 | [diesel_localization](https://github.com/ZQU-Foray/diesel_localization) | 定位与地图：内置地图 + 激光配准 · 配准残差动态物体检测 |
-| [diesel_vision](https://github.com/ZQU-Foray/diesel_vision) | 视觉与态势：装甲板检测跟踪 · 多源态势融合 · WorldSnapshot 生成 |
-| [diesel_auto_aim](https://github.com/ZQU-Foray/diesel_auto_aim) | 自瞄：弹道解算 · 多源目标融合 · 装甲板跟踪 |
+| [diesel_vision_frontend](https://github.com/ZQU-Foray/diesel_vision_frontend) | 视觉前端：装甲板检测（双模型 ONNX）· PnP 几何 · 可插拔多目标检测框架 |
+| [diesel_vision_backend](https://github.com/ZQU-Foray/diesel_vision_backend) | 视觉后端：多源观测融合 · EKF 装甲板跟踪 · 瞄准解算 · WorldSnapshot 输出 |
 | [diesel_navigation](https://github.com/ZQU-Foray/diesel_navigation) | 导航栈（ROS 2 / Nav2） |
 | [diesel_decision](https://github.com/ZQU-Foray/diesel_decision) | 决策层：战术层 · 技能层 · 安全门 · 机间协同 · 对局仿真 |
 | [diesel_robots](https://github.com/ZQU-Foray/diesel_robots) | 兵种装配根：sentry_bringup / infantry_bringup · 参数 · 场地资产 |
