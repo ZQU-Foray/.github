@@ -1,0 +1,28 @@
+# 组织编辑器配置 —— **canonical 唯一源**
+#   规范说明：ZQU-Foray/foray_docs → naming.md §5
+#
+# 用法：复制到仓库根目录。编辑器（VS Code / CLion / Vim / Emacs）会自动读取，
+#   保证「保存即符合组织风格」，把风格问题挡在提交之前而不是 CI 里。
+#   CI 不对本文件做逐字节比对，但它缺了容易出现「编辑器 2 空格、clang-format 4 空格」
+#   的反复格式化。
+
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+indent_style = space
+indent_size = 4
+
+# 配置类文件习惯 2 空格
+[*.{yml,yaml,json,jsonc,cmake}]
+indent_size = 2
+
+[*.md]
+# Markdown 行尾两个空格是硬换行语法，不能裁掉
+trim_trailing_whitespace = false
+
+[Makefile]
+indent_style = tab

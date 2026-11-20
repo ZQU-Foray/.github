@@ -1,0 +1,26 @@
+# 组织 Python 工具配置 —— **canonical 唯一源**
+#   规范说明：ZQU-Foray/foray_docs → naming.md §5
+#
+# 用法：复制到仓库根目录，不要在本文件基础上自定义各仓参数。
+#   CI 的 style-config 作业会与这份逐字节比对，仓根 .diesel-naming 的 mode
+#   为 enforced 时不一致即失败。
+#
+# 目标 Python 版本与 CI / ROS 2 humble 保持一致（3.10），避免 ruff 的自动修复
+# 引入 3.11+ 才有的写法（例如把 datetime.timezone.utc 改成 datetime.UTC，
+# 运行时在 3.10 上会 AttributeError）。
+#
+# 一般仓没有需要打包的 Python 分发包（launch / scripts / tools 直接运行），
+# 故只配置检查器，不配置 [build-system]；确有分发包的仓自行追加。
+
+[tool.ruff]
+target-version = "py310"
+line-length = 88
+
+# 不在这里扩 [tool.ruff.lint] 规则集：规则集一变，所有仓的 `ruff check .` 立刻换行为，
+# 属于组织级变更。要扩必须在组织 .github 提 PR 并同步各仓，不要在单仓里加。
+
+[tool.black]
+# black 默认 line-length 就是 88，这里显式写出来是为了让「为什么 88」可查：
+# 88 列下 launch 参数表仍可读，再放宽会与上游 ROS 2 包的排版习惯脱节。
+line-length = 88
+target-version = ["py310"]
